@@ -25,15 +25,24 @@
     'alquimia das almas':'Alchemy of Souls',
     'o rei de porcelana':'The King’s Affection',
     'nosso eterno verao':'Our Beloved Summer',
-    'o amor volta para casa':'Romance Is a Bonus Book',
     'caes de caca':'Bloodhounds',
-    'caes de caca ao tesouro':'Bloodhounds',
     'familia por escolha':'Family by Choice',
-    'garota do seculo 20':'20th Century Girl',
     'hierarquia':'Hierarchy',
     'medicos em colapso':'Doctor Slump',
     'doutor slump':'Doctor Slump'
   };
+
+  function setupNavigation(){
+    var nav=document.querySelector('.nav'), wrap=document.querySelector('.wrap');
+    if(!nav||!wrap)return;
+    var st=document.createElement('style');
+    st.textContent='.wrap{padding-bottom:28px!important}.nav{position:sticky!important;left:auto!important;right:auto!important;bottom:auto!important;top:8px!important;margin:-8px 0 13px!important;display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:8px!important;background:rgba(255,255,255,.97)!important;padding:8px!important;border-radius:22px!important;box-shadow:0 10px 24px rgba(105,61,76,.16)!important;z-index:20!important}.nav button{padding:11px 6px!important}';
+    document.head.appendChild(st);
+    wrap.insertBefore(nav,wrap.firstChild);
+    var n=document.getElementById('name'); if(n)n.placeholder='Ex.: Rainha das Lágrimas';
+  }
+  setupNavigation();
+
   function norm(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim()}
   function asianCode(s){return (s.network&&s.network.country&&s.network.country.code)||(s.webChannel&&s.webChannel.country&&s.webChannel.country.code)||''}
   function rank(data){var asian=['KR','JP','CN','TH','TW','HK'];return data.sort(function(a,b){var ap=a.show._ptTitle?0:1,bp=b.show._ptTitle?0:1;if(ap!==bp)return ap-bp;var aa=asian.indexOf(asianCode(a.show))>=0?0:1,bb=asian.indexOf(asianCode(b.show))>=0?0:1;if(aa!==bb)return aa-bb;return (b.score||0)-(a.score||0)})}
@@ -61,18 +70,19 @@
     var box=$(mode==='main'?'mainResults':'queueResults');
     box.innerHTML='<div class="results"><div class="loading">Buscando doramas, inclusive títulos em português…</div></div>';
     try{
-      var direct=await tv(q), merged=direct.slice(), key=norm(q), alt=aliases[key];
+      var key=norm(q),alt=aliases[key],direct=await tv(q),merged=direct.slice();
       if(alt){
-        var ad=await tv(alt);ad.forEach(function(x){x.show._ptTitle=q;x.show._ptSource='alias';merged.push(x)})
+        var ad=await tv(alt);
+        ad.forEach(function(x){x.show._ptTitle=q;x.show._ptSource='alias';merged.push(x)});
       }
       var hasAsian=direct.some(function(x){return ['KR','JP','CN','TH','TW','HK'].indexOf(asianCode(x.show))>=0});
-      if(!alt && (!direct.length||!hasAsian)){
+      if(!alt&&(!direct.length||!hasAsian)){
         var cands=await wikidataCandidates(q);
         var sets=await Promise.all(cands.slice(0,3).map(async function(c){try{var a=await tv(c.en);a.slice(0,4).forEach(function(x){x.show._ptTitle=c.pt||q;x.show._wikidataId=c.id});return a.slice(0,4)}catch(e){return[]}}));
-        sets.forEach(function(a){merged=merged.concat(a)})
+        sets.forEach(function(a){merged=merged.concat(a)});
       }
       var seen={},unique=[];rank(merged).forEach(function(x){var id=String(x.show.id);if(!seen[id]){seen[id]=1;unique.push(x)}});
-      renderResults(mode,unique.slice(0,8))
+      renderResults(mode,unique.slice(0,8));
     }catch(e){box.innerHTML='<div class="results"><div class="loading">Não foi possível consultar o catálogo agora. O cadastro manual continua disponível.</div></div>'}
   };
   pickShow=function(mode,id){var s=apiCache[String(id)];if(!s)return;var display=s._ptTitle||s.name;if(mode==='main'){selectedMain=s;$('name').value=display;$('mainResults').innerHTML=''}else{selectedQueue=s;$('queueName').value=display;$('queueResults').innerHTML=''}renderSelected(mode)};
