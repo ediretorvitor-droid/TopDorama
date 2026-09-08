@@ -12,6 +12,9 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
 public class MainActivity extends Activity {
     private WebView webView;
 
@@ -49,14 +52,22 @@ public class MainActivity extends Activity {
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                 if (url != null && url.startsWith("file:///android_asset/index.html")) {
-                    view.evaluateJavascript(
-                        "(function(){var s=document.createElement('script');s.src='file:///android_asset/pt-search.js?v=2';document.body.appendChild(s);})();",
-                        null
-                    );
+                    injectAssetScript(view, "pt-search.js");
                 }
             }
         });
         webView.loadUrl("file:///android_asset/index.html");
+    }
+
+    private void injectAssetScript(WebView view, String assetName) {
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(getAssets().open(assetName), "UTF-8"));
+            StringBuilder js = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) js.append(line).append('\n');
+            reader.close();
+            view.evaluateJavascript(js.toString(), null);
+        } catch (Exception ignored) {}
     }
 
     @Override
