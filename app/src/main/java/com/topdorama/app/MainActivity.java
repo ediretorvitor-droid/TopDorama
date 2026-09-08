@@ -44,6 +44,17 @@ public class MainActivity extends Activity {
                 try { startActivity(i); } catch (Exception ignored) {}
                 return true;
             }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                if (url != null && url.startsWith("file:///android_asset/index.html")) {
+                    view.evaluateJavascript(
+                        "(function(){var s=document.createElement('script');s.src='file:///android_asset/pt-search.js?v=2';document.body.appendChild(s);})();",
+                        null
+                    );
+                }
+            }
         });
         webView.loadUrl("file:///android_asset/index.html");
     }
