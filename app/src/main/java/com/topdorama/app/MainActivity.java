@@ -3,6 +3,7 @@ package com.topdorama.app;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
@@ -60,6 +61,24 @@ public class MainActivity extends Activity {
             sendIntent.setType("text/plain");
             sendIntent.putExtra(Intent.EXTRA_TEXT, text);
             startActivity(Intent.createChooser(sendIntent, "Compartilhar Top Dorama"));
+        }
+
+        @JavascriptInterface
+        public void shareWhatsApp(String text) {
+            Intent sendIntent = new Intent(Intent.ACTION_SEND);
+            sendIntent.setType("text/plain");
+            sendIntent.putExtra(Intent.EXTRA_TEXT, text);
+            sendIntent.setPackage("com.whatsapp");
+            try {
+                startActivity(sendIntent);
+            } catch (Exception e) {
+                try {
+                    Intent browser = new Intent(Intent.ACTION_VIEW, Uri.parse("https://wa.me/?text=" + Uri.encode(text)));
+                    startActivity(browser);
+                } catch (Exception ignored) {
+                    share(text);
+                }
+            }
         }
     }
 }
