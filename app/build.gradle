@@ -10,11 +10,23 @@ android {
         applicationId 'com.topdorama.mobiletest'
         minSdk 24
         targetSdk 35
-        versionCode 4
-        versionName '0.4.0-test'
+        versionCode 5
+        versionName '0.5.0-test'
+    }
+
+    signingConfigs {
+        debug {
+            storeFile file('topdorama-test.keystore')
+            storePassword 'topdorama123'
+            keyAlias 'topdorama_test'
+            keyPassword 'topdorama123'
+        }
     }
 
     buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+        }
         release {
             minifyEnabled false
         }
