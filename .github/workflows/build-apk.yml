@@ -12,6 +12,11 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test data, dates and statistics rules
+        run: node --test tests/*.test.js
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
@@ -25,4 +30,4 @@ jobs:
         with:
           name: TopDorama-test-apk
           path: app/build/outputs/apk/debug/app-debug.apk
-# fixed signing v1
+# The committed key signs test builds only. Production must use Play App Signing.

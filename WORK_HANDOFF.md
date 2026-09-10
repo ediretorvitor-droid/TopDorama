@@ -1,7 +1,7 @@
 # Top Dorama — Handoff para ChatGPT Work
 
 ## Estado atual
-Projeto Android funcional em fase de MVP/testes, compilado via GitHub Actions.
+Projeto Android funcional em fase de MVP/testes, compilado via GitHub Actions. Versão atual: `0.7.0-test-data-safety` (`versionCode 7`).
 
 Repositório: `ediretorvitor-droid/TopDorama`
 Branch principal: `main`
@@ -16,6 +16,8 @@ Aplicativo gratuito para fãs de doramas registrarem o que assistiram, darem not
 - Dados pessoais e avaliações ficam localmente no aparelho via armazenamento local do WebView.
 - Catálogo/busca usa TVmaze.
 - Tradução/fallback de nomes em português foi adicionada para melhorar pesquisas.
+- Regras de dados, datas e estatísticas ficam em `app/src/main/assets/topdorama-core.js`.
+- Testes automatizados ficam em `tests/topdorama-core.test.js`.
 - Compilação automática via `.github/workflows/build-apk.yml`.
 
 ## Funcionalidades já implementadas
@@ -34,6 +36,11 @@ Aplicativo gratuito para fãs de doramas registrarem o que assistiram, darem not
 - Busca em português e tentativa de busca parcial por título.
 - Capas, ano e país quando disponíveis.
 - Ícone customizado do Top Dorama.
+- Prevenção de doramas duplicados entre a fila e o histórico.
+- Migração automática do formato local anterior sem apagar os registros existentes.
+- Exportação e restauração de backup local em JSON.
+- Datas calculadas no calendário local do aparelho.
+- Gráficos alinhados ao período corrente: semana, mês completo e ano.
 
 ## Requisitos de UX definidos pelo usuário
 - Paleta rosa + amarelo claro.
@@ -46,6 +53,8 @@ Aplicativo gratuito para fãs de doramas registrarem o que assistiram, darem not
 
 ## Regras de dados
 - Avaliações, notas, observações, fila e histórico devem ficar no próprio celular na versão inicial.
+- O armazenamento atual usa um envelope versionado (`version: 2`) e migra os arrays das versões anteriores.
+- O usuário pode exportar e restaurar um backup JSON pelo seletor de arquivos do Android.
 - Sem login obrigatório e sem servidor próprio neste MVP.
 - Se futuramente houver sincronização entre aparelhos, considerar Firebase ou Supabase.
 
@@ -67,14 +76,12 @@ Aplicativo gratuito para fãs de doramas registrarem o que assistiram, darem not
 - Para Play Store, configurar assinatura de produção adequada e App Bundle (`.aab`).
 
 ## Próximos passos recomendados no Work
-1. Revisar e consolidar a busca parcial em português para não depender apenas de aliases fixos.
-2. Validar todos os fluxos de status e edição.
-3. Melhorar persistência/migração local antes de usuários reais começarem a acumular dados.
-4. Criar backup/exportação e restauração local.
-5. Melhorar cards de compartilhamento do Top 10.
-6. Preparar política de privacidade e créditos/licenças da TVmaze.
-7. Integrar AdMob apenas após estabilizar o produto.
-8. Preparar build de produção em AAB e checklist da Play Store.
+1. Fazer testes manuais no aparelho dos fluxos de cadastro, edição, fila, busca e restauração.
+2. Ampliar progressivamente a busca em português para reduzir a dependência de aliases fixos.
+3. Melhorar o card de compartilhamento do Top 10.
+4. Preparar política de privacidade e créditos/licenças da TVmaze.
+5. Integrar AdMob apenas após estabilizar o produto.
+6. Preparar build de produção em AAB e checklist da Play Store.
 
 ## Observação sobre builds de teste
 Foi criada uma assinatura fixa apenas para testes para permitir atualização do APK sem desinstalar e sem perder os dados locais. Isso é separado da futura assinatura de produção da Play Store.
